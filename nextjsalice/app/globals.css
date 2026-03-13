@@ -1,5 +1,6 @@
-@import "tailwindcss";
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @theme {
   --color-pastel-bg: #EDE7FF;
   --color-pastel-surface: #E6F4FF;

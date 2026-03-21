@@ -1,33 +1,90 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
+import { Tab, TabGroup, TabList } from "@headlessui/react";
+
+const tabClass = `
+  rounded-full px-4 py-2 text-sm font-semibold
+  w-full md:w-auto
+  text-pastel-text
+  transition-all duration-200
+
+  hover:bg-pastel-secondary/20
+  hover:text-pastel-text
+
+  data-selected:bg-pastel-primary
+  data-selected:text-white
+  data-selected:shadow-md
+
+  focus:outline-none focus:ring-2 focus:ring-pastel-primary/40
+`;
 
 export default function Home() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const tabs = [
+    "Accueil",
+    "À propos",
+    "Mes mascottes",
+    "Contactez-moi",
+  ];
+
   return (
     <div className="bg-pastel-bg min-h-screen text-pastel-text">
 
       {/* Navbar */}
-      <div className="bg-gradient-to-r from-pastel-navbarStart to-pastel-navbarEnd w-full flex py-6 shadow-md">
+      <div className="w-full flex items-center justify-between py-4 px-4 shadow-md bg-gradient-to-r from-pastel-navbarStart to-pastel-navbarEnd">
 
         {/* LOGO */}
-        <div className="flex justify-center items-center ml-4">
-          <Image
-            src="/images/chien.jpg"
-            alt="Logo"
-            width={100}
-            height={100}
-            className="w-10 h-10 rounded-full border-2 border-white shadow"
-          />
-        </div>
+        <Image
+          src="/images/chien.jpg"
+          alt="Logo"
+          width={40}
+          height={40}
+          className="rounded-full border-2 border-white shadow"
+        />
 
-        {/* Navigation */}
-        <div className="ml-6 flex items-center space-x-6 text-white font-medium">
-          {/* <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
-          <Link href="/mes-mascotes"></Link>
-          <Link href="/contact">Contact</Link> */}
-        </div>
+        {/* 🍔 Mobile ONLY */}
+        <button
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="flex flex-col space-y-1 md:hidden"
+        >
+          <span className="w-6 h-0.5 bg-white"></span>
 
+          <span className="w-6 h-0.5 bg-white"></span>
+
+          <span className="w-6 h-0.5 bg-white"></span>
+        </button>
+
+        {/* 💻 Desktop ONLY */}
+        <div className="hidden sm:flex items-center">
+          <TabGroup>
+            <TabList className="flex items-center space-x-4 font-medium">
+              {tabs.map((tab) => (
+                <Tab key={tab} className={tabClass}>
+                  {tab}
+                </Tab>
+              ))}
+            </TabList>
+          </TabGroup>
+        </div>
       </div>
 
+      {/* 📱 Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden px-4 pb-4 bg-pastel-surface shadow-md">
+          <TabGroup>
+            <TabList className="flex flex-col space-y-2">
+              {tabs.map((tab) => (
+                <Tab key={tab} className={tabClass}>
+                  {tab}
+                </Tab>
+              ))}
+            </TabList>
+          </TabGroup>
+        </div>
+      )}
       {/* Header */}
       <div className="w-full flex justify-center items-center bg-gradient-to-b from-pastel-bg to-pastel-surface py-16">
 

@@ -1,28 +1,49 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getPets, type Pet } from "@/app/lib/api/pets";
 import Image from "next/image";
 import { Tab, TabGroup, TabList } from "@headlessui/react";
 
+
+
+
+
 const tabClass = `
-  rounded-full px-4 py-2 text-sm font-semibold
-  w-full md:w-auto
-  text-pastel-text
-  transition-all duration-200
+rounded-full px-4 py-2 text-sm font-semibold
+w-full md:w-auto
+text-pastel-text
+transition-all duration-200
 
-  hover:bg-pastel-secondary/20
-  hover:text-pastel-text
+hover:bg-pastel-secondary/20
+hover:text-pastel-text
 
-  data-selected:bg-pastel-primary
-  data-selected:text-white
-  data-selected:shadow-md
+data-selected:bg-pastel-primary
+data-selected:text-white
+data-selected:shadow-md
 
-  focus:outline-none focus:ring-2 focus:ring-pastel-primary/40
+focus:outline-none focus:ring-2 focus:ring-pastel-primary/40
 `;
 
 export default function Home() {
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        const data = await getPets();
+        setPets(data);
+      } catch (err) {
+        console.error("Error fetching pets:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchPets();
+  }, []);
   const [isOpen, setIsOpen] = useState(false);
-
+  
   const tabs = [
     "Accueil",
     "À propos",
@@ -31,24 +52,25 @@ export default function Home() {
   ];
 
   return (
-    <div className="bg-pastel-bg min-h-screen text-pastel-text">
+    <div className="bg-pastel-bg min-h-screen text-pastel-text ">
 
       {/* Navbar */}
       <div className="w-full flex items-center justify-between py-4 px-4 shadow-md bg-gradient-to-r from-pastel-navbarStart to-pastel-navbarEnd">
-
+<div className="w-full md:max-w-[1440px] flex sm:mx-auto justify-between ">
         {/* LOGO */}
-        <Image
-          src="/images/chien.jpg"
-          alt="Logo"
-          width={40}
-          height={40}
-          className="rounded-full border-2 border-white shadow"
-        />
+        <div className="relative w-12 h-12 md:w-16 md:h-16 sm:mx-12">
+          <Image
+            src="/images/chien.jpg"
+            alt="Logo"
+            fill
+            className="object-cover rounded-lg border-2 border-white shadow"
+          />
+        </div>
 
         {/* 🍔 Mobile ONLY */}
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="flex flex-col space-y-1 md:hidden"
+          className="flex flex-col space-y-1 sm:hidden"
         >
           <span className="w-6 h-0.5 bg-white"></span>
 
@@ -70,7 +92,7 @@ export default function Home() {
           </TabGroup>
         </div>
       </div>
-
+</div>
       {/* 📱 Mobile Menu */}
       {isOpen && (
         <div className="md:hidden px-4 pb-4 bg-pastel-surface shadow-md">
@@ -111,9 +133,39 @@ export default function Home() {
 
         <div className="bg-pastel-secondary/20 px-8 py-6 rounded-xl shadow border border-pastel-border">
 
-          <h1 className="text-2xl font-bold">
-            Alice
-          </h1>
+        <h1 className="text-2xl font-bold mb-4">
+  Mes mascottes
+</h1>
+
+        {loading ? (
+          <p>Chargement...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {pets.map((pet) => (
+              <div
+                key={pet.id}
+                className="p-4 bg-white rounded-lg shadow border border-pastel-border"
+              >
+                <h2 className="font-semibold text-lg">{pet.name}</h2>
+                <p className="text-sm text-pastel-muted">
+                  Catégorie:{" "}
+                  {typeof pet.category === "number"
+                    ? `#${pet.category}`
+                    : pet.category.name}
+                </p>
+                {pet.picture && (
+                  <div className="mt-2 w-full h-40 relative">
+                    <img
+                      src={pet.picture}
+                      alt={pet.name}
+                      className="object-cover rounded-lg w-full h-full"
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
         </div>
 

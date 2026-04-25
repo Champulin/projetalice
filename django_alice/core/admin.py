@@ -29,13 +29,13 @@ class PetAdmin(admin.ModelAdmin):
         "picture_preview",
         "name",
         "category",
-        "owner_name",
+        "owner",
         "birth_date",
     )
 
-    list_filter = ("category","birth_date")
-    search_fields = ("name", "owner_name")
-    ordering = ("name","birth_date")
+    list_filter = ("category", "birth_date")
+    search_fields = ("name", "owner__username")
+    ordering = ("name", "birth_date")
 
     inlines = [PetVaccinationInline]
 
@@ -46,7 +46,7 @@ class PetAdmin(admin.ModelAdmin):
             "fields": ("name", "category", "birth_date")
         }),
         ("Owner", {
-            "fields": ("owner_name",)
+            "fields": ("owner",)
         }),
         ("Picture", {
             "fields": ("picture", "picture_preview")

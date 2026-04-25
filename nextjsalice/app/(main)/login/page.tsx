@@ -36,7 +36,7 @@ function LoginForm() {
       const { access, refresh } = await res.json();
       localStorage.setItem("access_token", access);
       localStorage.setItem("refresh_token", refresh);
-      router.push("/dashboard");
+      router.push("/");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {

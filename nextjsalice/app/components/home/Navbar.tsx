@@ -1,36 +1,32 @@
 "use client";
 
 import Image from "next/image";
-import { Tab, TabGroup, TabList } from "@headlessui/react";
+import { useRouter } from "next/navigation";
+
+export type NavTab = { label: string; href: string };
 
 type NavbarProps = {
-  tabs: string[];
+  tabs: NavTab[];
   isOpen: boolean;
   onToggle: () => void;
 };
 
-const tabClass = `
+const tabBase = `
   rounded-full px-4 py-2 text-sm font-semibold
-  w-full md:w-auto
-  text-pastel-text
+  w-full md:w-auto text-pastel-text
   transition-all duration-200
-
-  hover:bg-pastel-secondary/20
-  hover:text-pastel-text
-
-  data-selected:bg-pastel-primary
-  data-selected:text-white
-  data-selected:shadow-md
-
+  hover:bg-pastel-secondary/20 hover:text-pastel-text
   focus:outline-none focus:ring-2 focus:ring-pastel-primary/40
 `;
 
 export default function Navbar({ tabs, isOpen, onToggle }: NavbarProps) {
+  const router = useRouter();
+
   return (
     <>
       <div className="w-full flex items-center justify-between py-4 px-4 shadow-md bg-gradient-to-r from-pastel-navbarStart to-pastel-navbarEnd">
-        <div className="w-full md:max-w-[1440px] flex sm:mx-auto justify-between ">
-          {/* LOGO */}
+        <div className="w-full md:max-w-[1440px] flex sm:mx-auto justify-between">
+          {/* Logo */}
           <div className="relative w-12 h-12 md:w-16 md:h-16 sm:mx-12">
             <Image
               src="/images/chien.jpg"
@@ -40,7 +36,7 @@ export default function Navbar({ tabs, isOpen, onToggle }: NavbarProps) {
             />
           </div>
 
-          {/* Mobile menu toggle */}
+          {/* Mobile toggle */}
           <button
             onClick={onToggle}
             className="flex flex-col space-y-1 sm:hidden"
@@ -52,35 +48,26 @@ export default function Navbar({ tabs, isOpen, onToggle }: NavbarProps) {
           </button>
 
           {/* Desktop tabs */}
-          <div className="hidden sm:flex items-center">
-            <TabGroup>
-              <TabList className="flex items-center space-x-4 font-medium">
-                {tabs.map((tab) => (
-                  <Tab key={tab} className={tabClass}>
-                    {tab}
-                  </Tab>
-                ))}
-              </TabList>
-            </TabGroup>
+          <div className="hidden sm:flex items-center gap-2">
+            {tabs.map(({ label, href }) => (
+              <button key={href} onClick={() => router.push(href)} className={tabBase}>
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden px-4 pb-4 bg-pastel-surface shadow-md">
-          <TabGroup>
-            <TabList className="flex flex-col space-y-2">
-              {tabs.map((tab) => (
-                <Tab key={tab} className={tabClass}>
-                  {tab}
-                </Tab>
-              ))}
-            </TabList>
-          </TabGroup>
+        <div className="md:hidden px-4 pb-4 bg-pastel-surface shadow-md flex flex-col gap-2">
+          {tabs.map(({ label, href }) => (
+            <button key={href} onClick={() => router.push(href)} className={tabBase}>
+              {label}
+            </button>
+          ))}
         </div>
       )}
     </>
   );
 }
-

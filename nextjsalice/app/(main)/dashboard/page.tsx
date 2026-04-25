@@ -73,6 +73,10 @@ export default function DashboardPage() {
             <span style={{ ...styles.statVal, color: "#2e7d32" }}>Active ✓</span>
           </div>
         </div>
+
+        <button onClick={() => router.push("/pets")} style={styles.petsBtn}>
+          My pets →
+        </button>
       </div>
     </main>
   );
@@ -140,6 +144,19 @@ const styles: Record<string, React.CSSProperties> = {
     fontFamily: "'Helvetica Neue', sans-serif",
     color: "#555",
     flexShrink: 0,
+  },
+  petsBtn: {
+    marginTop: "20px",
+    width: "100%",
+    padding: "13px",
+    background: "#0f0f0f",
+    color: "#e8ff5a",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "15px",
+    fontWeight: "600",
+    cursor: "pointer",
+    fontFamily: "'Helvetica Neue', sans-serif",
   },
   grid: {
     display: "grid",

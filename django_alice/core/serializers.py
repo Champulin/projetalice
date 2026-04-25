@@ -24,7 +24,7 @@ class PetVaccinationSerializer(serializers.ModelSerializer):
     vaccination_id = serializers.PrimaryKeyRelatedField(
         queryset=VaccinationType.objects.all(),
         source="vaccination",
-        write_only=True
+        write_only=True,
     )
 
     class Meta:
@@ -43,16 +43,15 @@ class PetSerializer(serializers.ModelSerializer):
     category_id = serializers.PrimaryKeyRelatedField(
         queryset=Category.objects.all(),
         source="category",
-        write_only=True
+        write_only=True,
     )
-
     vaccinations = PetVaccinationSerializer(
         source="pet_vaccinations",
         many=True,
-        read_only=True
+        read_only=True,
     )
-
-    picture = serializers.ImageField(required=False)
+    owner_username = serializers.CharField(source="owner.username", read_only=True)
+    picture = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Pet
@@ -62,7 +61,9 @@ class PetSerializer(serializers.ModelSerializer):
             "category",
             "category_id",
             "birth_date",
-            "owner_name",
+            "owner_username",
             "picture",
             "vaccinations",
+            "created_at",
         )
+        read_only_fields = ("created_at",)

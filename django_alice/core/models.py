@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -27,9 +28,15 @@ class Pet(models.Model):
         on_delete=models.PROTECT,
         related_name="pets"
     )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="pets",
+        null=True,
+        blank=True,
+    )
     picture = models.ImageField(upload_to='pets/', blank=True, null=True)
     birth_date = models.DateField(null=True, blank=True)
-    owner_name = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     vaccinations = models.ManyToManyField(

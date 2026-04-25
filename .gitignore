@@ -1,27 +1,28 @@
-Python
-pycache/
-.pyc
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
 env/
 venv/
 .env
 
-Django
+# Django
 db.sqlite3
 media/
-__pycache__/
-Node
+
+# Node
 node_modules/
 .next/
 npm-debug.log
 yarn-debug.log*
 yarn-error.log*
 
-OS
+# OS
 .DS_Store
 Thumbs.db
 
-VSCode
+# VSCode
 .vscode/
 
-Logs
+# Logs
 *.log

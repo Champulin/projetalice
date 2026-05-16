@@ -7,7 +7,7 @@ import Navbar from "../../components/home/Navbar";
 import Footer from "../../components/home/Footer";
 
 const MEDIA = "http://127.0.0.1:8000";
-
+ 
 export default function PetsPage() {
   const router = useRouter();
   const [pets, setPets] = useState<Pet[]>([]);
@@ -87,7 +87,7 @@ export default function PetsPage() {
               >
                 <div className="w-full h-44 bg-pastel-surface flex items-center justify-center overflow-hidden">
                   {pet.picture
-                    ? <img src={`${MEDIA}${pet.picture}`} alt={pet.name} className="w-full h-full object-cover" />
+                    ? <img src={pet.picture} alt={pet.name} className="w-full h-full object-cover" />
                     : <span className="text-5xl">🐾</span>}
                 </div>
                 <div className="p-4">

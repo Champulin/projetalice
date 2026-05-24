@@ -124,8 +124,8 @@ export default function PetDetailPage() {
         <div className="bg-pastel-surface rounded-2xl border border-pastel-border shadow-lg p-6 flex gap-6 items-start flex-wrap">
           <div className="w-32 h-32 rounded-xl bg-pastel-bg border border-pastel-border flex items-center justify-center overflow-hidden flex-shrink-0">
             {pet.picture
-              ? <img src={`${MEDIA}${pet.picture}`} alt={pet.name} className="w-full h-full object-cover" />
-              : <span className="text-5xl">🐾</span>}
+                    ? <img src={pet.picture} alt={pet.name} className="w-full h-full object-cover" />
+                    : <span className="text-5xl">🐾</span>}
           </div>
           <div className="flex-1">
             <h1 className="text-2xl font-bold mb-1">{pet.name}</h1>

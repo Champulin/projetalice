@@ -4,11 +4,13 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createPet } from "../../../lib/api/pets";
 import { getCategories, Category } from "../../../lib/api/categories";
+import { useAuth } from "../../../lib/hooks/useAuth";
 import Navbar from "../../../components/home/Navbar";
 import Footer from "../../../components/home/Footer";
 
 export default function NewPetPage() {
   const router = useRouter();
+  const token = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -24,10 +26,9 @@ export default function NewPetPage() {
   ];
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) { router.push("/login"); return; }
+    if (!token) return;
     getCategories(token).then(setCategories).catch(() => {});
-  }, [router]);
+  }, [token]);
 
   function setField(field: string, value: string) {
     setForm(f => ({ ...f, [field]: value }));
@@ -41,7 +42,6 @@ export default function NewPetPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrors({});
-    const token = localStorage.getItem("access_token");
     if (!token) { router.push("/login"); return; }
 
     const data = new FormData();

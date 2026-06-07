@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api";
+import { loginUser } from "@/app/lib/api/api";
+import { saveTokens } from "@/app/lib/api/auth";
 
 function LoginForm() {
   const router = useRouter();
@@ -24,18 +23,8 @@ function LoginForm() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch(`${API}/accounts/login/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.detail ?? "Invalid credentials");
-      }
-      const { access, refresh } = await res.json();
-      localStorage.setItem("access_token", access);
-      localStorage.setItem("refresh_token", refresh);
+      const { access, refresh } = await loginUser(username, password);
+      saveTokens(access, refresh);
       router.push("/");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");

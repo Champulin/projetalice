@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+import { getMe, logoutUser } from "@/app/lib/api/api";
+import { getTokens, clearTokens } from "@/app/lib/api/auth";
 
 type User = { id: number; username: string; email: string; birth_date: string | null };
 
@@ -13,27 +13,18 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) { router.push("/login"); return; }
+    const { access } = getTokens();
+    if (!access) { router.push("/login"); return; }
 
-    fetch(`${API}/accounts/me/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(r => { if (!r.ok) throw new Error("Unauthorized"); return r.json(); })
+    getMe(access)
       .then(setUser)
       .catch(() => { router.push("/login"); });
   }, [router]);
 
   async function handleLogout() {
-    const access  = localStorage.getItem("access_token")  ?? "";
-    const refresh = localStorage.getItem("refresh_token") ?? "";
-    await fetch(`${API}/accounts/logout/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${access}` },
-      body: JSON.stringify({ refresh }),
-    }).catch(() => {});
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    const { access, refresh } = getTokens();
+    await logoutUser(refresh ?? "", access ?? "").catch(() => {});
+    clearTokens();
     router.push("/login");
   }
 

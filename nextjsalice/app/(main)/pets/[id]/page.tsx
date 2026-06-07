@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { getPet, deletePet, addVaccination, deleteVaccination, Pet, PetVaccination } from "../../../lib/api/pets";
 import { getVaccinationTypes, VaccinationType } from "../../../lib/api/vaccinations";
+import { useAuth } from "../../../lib/hooks/useAuth";
 import Navbar from "../../../components/home/Navbar";
 import Footer from "../../../components/home/Footer";
 
-const MEDIA = "http://127.0.0.1:8000";
-
 export default function PetDetailPage() {
   const router = useRouter();
+  const token = useAuth();
   const { id } = useParams<{ id: string }>();
   const petId = Number(id);
 
@@ -31,29 +31,21 @@ export default function PetDetailPage() {
     { label: "+ Ajouter", href: "/pets/new" },
   ];
 
-  function getToken() {
-    const t = localStorage.getItem("access_token");
-    if (!t) { router.push("/login"); return null; }
-    return t;
-  }
-
-  async function reload(token: string) {
-    const p = await getPet(petId, token);
+  async function reload(t: string) {
+    const p = await getPet(petId, t);
     setPet(p);
   }
 
   useEffect(() => {
-    const token = getToken();
     if (!token) return;
     Promise.all([getPet(petId, token), getVaccinationTypes(token)])
       .then(([p, vt]) => { setPet(p); setVacTypes(vt); })
       .catch(() => setError("Impossible de charger la mascotte."))
       .finally(() => setLoading(false));
-  }, [petId]);
+  }, [petId, token]);
 
   async function handleDelete() {
     if (!confirm(`Supprimer ${pet?.name} ? Cette action est irréversible.`)) return;
-    const token = getToken();
     if (!token) return;
     await deletePet(petId, token);
     router.push("/pets");
@@ -62,7 +54,6 @@ export default function PetDetailPage() {
   async function handleAddVaccination(e: React.FormEvent) {
     e.preventDefault();
     setVacErrors({});
-    const token = getToken();
     if (!token) return;
     setVacLoading(true);
     try {
@@ -73,7 +64,7 @@ export default function PetDetailPage() {
       }, token);
       setVacForm({ vaccination_id: "", vaccination_date: "", valid_until: "" });
       setShowVacForm(false);
-      await reload(token);
+      if (token) await reload(token);
     } catch (err: unknown) {
       if (err && typeof err === "object") setVacErrors(err as Record<string, string[]>);
       else setVacErrors({ non_field_errors: ["Une erreur s'est produite."] });
@@ -83,7 +74,6 @@ export default function PetDetailPage() {
   }
 
   async function handleDeleteVac(vacId: number) {
-    const token = getToken();
     if (!token) return;
     await deleteVaccination(petId, vacId, token);
     await reload(token);

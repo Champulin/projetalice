@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api";
+import { registerUser } from "@/app/lib/api/api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,19 +21,11 @@ export default function RegisterPage() {
     setError({});
     setLoading(true);
     try {
-      const res = await fetch(`${API}/accounts/register/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data);
-        return;
-      }
+      await registerUser(form);
       router.push("/login?registered=1");
-    } catch {
-      setError({ non_field_errors: ["Network error — is Django running?"] });
+    } catch (err: unknown) {
+      if (err && typeof err === "object") setError(err as Record<string, string[]>);
+      else setError({ non_field_errors: ["Network error — is Django running?"] });
     } finally {
       setLoading(false);
     }

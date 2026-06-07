@@ -1,10 +1,7 @@
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api";
+import { API_BASE } from "./config";
+import { VaccinationType } from "./vaccinations";
 
-export interface VaccinationType {
-  id: number;
-  name: string;
-  is_mandatory: boolean;
-}
+export type { VaccinationType };
 
 export interface PetVaccination {
   id: number;
@@ -37,17 +34,17 @@ async function handleResponse<T>(res: Response): Promise<T> {
 }
 
 export async function getPets(token: string): Promise<Pet[]> {
-  const res = await fetch(`${API}/pets/`, { headers: authHeaders(token) });
+  const res = await fetch(`${API_BASE}/pets/`, { headers: authHeaders(token) });
   return handleResponse<Pet[]>(res);
 }
 
 export async function getPet(id: number, token: string): Promise<Pet> {
-  const res = await fetch(`${API}/pets/${id}/`, { headers: authHeaders(token) });
+  const res = await fetch(`${API_BASE}/pets/${id}/`, { headers: authHeaders(token) });
   return handleResponse<Pet>(res);
 }
 
 export async function createPet(data: FormData, token: string): Promise<Pet> {
-  const res = await fetch(`${API}/pets/`, {
+  const res = await fetch(`${API_BASE}/pets/`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: data,
@@ -56,7 +53,7 @@ export async function createPet(data: FormData, token: string): Promise<Pet> {
 }
 
 export async function updatePet(id: number, data: FormData, token: string): Promise<Pet> {
-  const res = await fetch(`${API}/pets/${id}/`, {
+  const res = await fetch(`${API_BASE}/pets/${id}/`, {
     method: "PATCH",
     headers: { Authorization: `Bearer ${token}` },
     body: data,
@@ -65,7 +62,7 @@ export async function updatePet(id: number, data: FormData, token: string): Prom
 }
 
 export async function deletePet(id: number, token: string): Promise<void> {
-  const res = await fetch(`${API}/pets/${id}/`, {
+  const res = await fetch(`${API_BASE}/pets/${id}/`, {
     method: "DELETE",
     headers: authHeaders(token),
   });
@@ -77,7 +74,7 @@ export async function addVaccination(
   data: { vaccination_id: number; vaccination_date: string; valid_until: string },
   token: string
 ): Promise<PetVaccination> {
-  const res = await fetch(`${API}/pets/${petId}/vaccinations/`, {
+  const res = await fetch(`${API_BASE}/pets/${petId}/vaccinations/`, {
     method: "POST",
     headers: authHeaders(token),
     body: JSON.stringify(data),
@@ -86,7 +83,7 @@ export async function addVaccination(
 }
 
 export async function deleteVaccination(petId: number, vacId: number, token: string): Promise<void> {
-  const res = await fetch(`${API}/pets/${petId}/vaccinations/${vacId}/`, {
+  const res = await fetch(`${API_BASE}/pets/${petId}/vaccinations/${vacId}/`, {
     method: "DELETE",
     headers: authHeaders(token),
   });

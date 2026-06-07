@@ -1,4 +1,4 @@
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000/api";
+import { API_BASE } from "./config";
 
 export interface Category {
   id: number;
@@ -7,9 +7,9 @@ export interface Category {
 }
 
 export async function getCategories(token: string): Promise<Category[]> {
-  const res = await fetch(`${API}/categories/`, {
+  const res = await fetch(`${API_BASE}/categories/`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error("Failed to load categories");
-  return res.json();
+  return res.json() as Promise<Category[]>;
 }

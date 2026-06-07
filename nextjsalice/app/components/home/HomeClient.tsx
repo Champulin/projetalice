@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getPets, type Pet } from "@/app/lib/api/pets";
+import { useAuth } from "@/app/lib/hooks/useAuth";
 import Navbar from "./Navbar";
 import HeroSection from "./HeroSection";
 import PetsSection from "./PetsSection";
 import Footer from "./Footer";
 
 export default function HomeClient() {
-  const router = useRouter();
+  const token = useAuth();
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -21,13 +21,12 @@ export default function HomeClient() {
   ];
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) { router.push("/login"); return; }
+    if (!token) return;
     getPets(token)
       .then(setPets)
       .catch(err => console.error("Error fetching pets:", err))
       .finally(() => setLoading(false));
-  }, [router]);
+  }, [token]);
 
   return (
     <div className="bg-pastel-bg min-h-screen text-pastel-text">

@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getPets, Pet } from "../../lib/api/pets";
+import { useAuth } from "../../lib/hooks/useAuth";
 import Navbar from "../../components/home/Navbar";
 import Footer from "../../components/home/Footer";
 
-const MEDIA = "http://127.0.0.1:8000";
- 
 export default function PetsPage() {
   const router = useRouter();
+  const token = useAuth();
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,13 +22,12 @@ export default function PetsPage() {
   ];
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) { router.push("/login"); return; }
+    if (!token) return;
     getPets(token)
       .then(setPets)
       .catch(() => setError("Impossible de charger les mascottes — Django est lancé ?"))
       .finally(() => setLoading(false));
-  }, [router]);
+  }, [token]);
 
   return (
     <div className="min-h-screen bg-pastel-bg text-pastel-text flex flex-col">
